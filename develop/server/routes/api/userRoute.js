@@ -5,18 +5,20 @@ const {
   saveBook,
   deleteBook,
   login,
+  logout,
 } = require('../../controllers/user-controller');
 
-// import middleware
 const { authMiddleware } = require('../../utils/auth');
 
-// put authMiddleware anywhere we need to send a token for verification of user
-router.route('/').post(createUser).put(authMiddleware, saveBook);
+// User Routes
+router.post('/signup', createUser);
+router.post('/login', login);
+router.post('/logout', authMiddleware, logout); // You can implement a logout endpoint if needed
+router.get('/me', authMiddleware, getSingleUser);
 
-router.route('/login').post(login);
-
-router.route('/me').get(authMiddleware, getSingleUser);
-
-router.route('/books/:bookId').delete(authMiddleware, deleteBook);
+// Book Routes
+router.route('/books/:bookId')
+  .delete(authMiddleware, deleteBook)
+  .post(authMiddleware, saveBook);
 
 module.exports = router;
